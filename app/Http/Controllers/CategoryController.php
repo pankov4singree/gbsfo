@@ -38,4 +38,12 @@ class CategoryController extends Controller
         $categories = build_tree($categories, $data['parent_id'], $exclude_id);
         return response()->json($categories);
     }
+
+    public function deleteCategory($id = null, Request $request){
+        if ($request->user()->can('delete', Category::class)) {
+            echo 'good';
+        } else{
+            abort(403);
+        }
+    }
 }

@@ -29,6 +29,22 @@ class Category extends Model
     }
 
     /**
+     * Get the Categories associated with the parent's `id`
+     */
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent', 'id');
+    }
+
+    /**
+     * Get the parent associated with the Category`s parent_id`
+     */
+    public function parent()
+    {
+        return $this->belongsTo(self::class);
+    }
+
+    /**
      * @return array
      */
     public function getSubitemsAttribute()

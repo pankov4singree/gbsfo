@@ -63,7 +63,7 @@ Route::prefix('api')->group(function () {
         Route::get('{id}', 'CategoryController@getCategory')->name('api.category.get');
         Route::post('create', 'CategoryController@createCategory')->name('api.category.create');
         Route::put('update', 'CategoryController@updateCategory')->name('api.category.update');
-        Route::delete('delete/{old_id}/new/{new_id}', 'CategoryController@deleteCategory')->name('api.category.delete');
+        Route::delete('delete/{old_id}', 'CategoryController@deleteCategory')->name('api.category.delete');
     });
 
     Route::prefix('books')->group(function(){
@@ -71,7 +71,7 @@ Route::prefix('api')->group(function () {
         Route::get('{id}', 'BooksController@getBook')->name('api.book.edit');
         Route::post('create', 'BooksController@createBook')->name('api.book.create');
         Route::put('update', 'BooksController@updateBook')->name('api.book.update');
-        Route::delete('delete/{old_id}', 'BooksController@deleteCategory')->name('api.category.delete');
+        Route::delete('delete/{old_id}', 'BooksController@deleteBook')->name('api.book.delete');
     });
 
     Route::prefix('authors')->group(function(){
@@ -79,6 +79,6 @@ Route::prefix('api')->group(function () {
         Route::get('{id}', 'AuthorController@getAuthor')->name('api.author.edit');
         Route::post('create', 'AuthorController@createAuthor')->name('api.author.create');
         Route::put('update', 'AuthorController@updateAuthor')->name('api.author.update');
-        Route::delete('delete/{old_id}/new/{new_id}', 'AuthorController@deleteCategory')->name('api.category.delete');
+        Route::delete('delete/{old_id}', 'AuthorController@deleteAuthor')->name('api.author.delete');
     });
 });

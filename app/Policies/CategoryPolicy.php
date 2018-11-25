@@ -20,6 +20,36 @@ class CategoryPolicy
         return false;
     }
 
+    public function delete(User $user)
+    {
+        foreach ($user->roles as $role) {
+            if ($role->role == 'admin') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function create(User $user)
+    {
+        foreach ($user->roles as $role) {
+            if ($role->role == 'admin') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function update(User $user)
+    {
+        foreach ($user->roles as $role) {
+            if ($role->role == 'admin') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Create a new policy instance.
      *

@@ -13,8 +13,11 @@
                                 <li ng-repeat="(key, category) in Categories" id="category-<%key%>" class="category">
                                     <div class="info" data-category="<%key%>">
                                         <a ng-if="category.routes.edit" href="<%category.routes.edit%>"><%category.name%></a>
+                                        <div class="control">
+                                            <a href="#" ng-click="deleteItem(category, {});">Удалить</a>
+                                        </div>
                                     </div>
-                                    <ul ng-if="category.subitems"
+                                    <ul ng-if="category.subitems" ng-init="parent_cat = category"
                                         ng-include="'/angular-template/admin/category-angular.html'"></ul>
                                 </li>
                             </uL>

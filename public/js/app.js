@@ -66984,6 +66984,8 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var app = angular.module('app', ['ngSanitize'], function ($interpolateProvider) {
     $interpolateProvider.startSymbol('<%');
     $interpolateProvider.endSymbol('%>');
@@ -67002,6 +67004,39 @@ app.controller('CategoriesCtrl', function ($scope, $http) {
     }).catch(function (response) {
         $scope.Categories = [];
     });
+
+    $scope.deleteItem = function (category, parent_cat) {
+        $http.delete('/api/categories/delete/' + category.id).then(function (response) {
+            if (Object.keys(category.subitems).length) {
+                if (_typeof(parent_cat.subitems) != ( true ? 'undefined' : _typeof(undefined))) {
+                    for (var item in category.subitems) {
+                        parent_cat.subitems[item] = category.subitems[item];
+                    }
+                    delete parent_cat.subitems[category.id];
+                } else {
+                    for (var item in category.subitems) {
+                        $scope.Categories[item] = category.subitems[item];
+                    }
+                    delete $scope.Categories[category.id];
+                }
+            }
+        }).catch(function (response) {
+            alert('Нельзя удалить категорию');
+        });
+    };
+});
+
+app.directive('a', function () {
+    return {
+        restrict: 'E',
+        link: function link(scope, elem, attrs) {
+            if (attrs.ngClick || attrs.href === '' || attrs.href === '#') {
+                elem.on('click', function (e) {
+                    e.preventDefault();
+                });
+            }
+        }
+    };
 });
 
 /***/ }),

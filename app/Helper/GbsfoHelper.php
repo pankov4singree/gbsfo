@@ -15,20 +15,6 @@ function current_page($uri = '/')
 
 /**
  * @param $elements
- * @param string $id_name
- * @param string $parent_name
- * @return array
- */
-function sorted_array($elements, $id_name = "id", $parent_name = "parent"){
-    $new = [];
-    foreach ($elements as $element) {
-            $new[$element->$parent_name][$element->$id_name] = $element;
-    }
-    return $new;
-}
-
-/**
- * @param $elements
  * @param int $parent_id
  * @param array $exclude_children
  * @param string $id_name
