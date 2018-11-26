@@ -25,13 +25,13 @@ class Category extends Model
      */
     public function books()
     {
-        return $this->belongsToMany('App\Models\Book');
+        return $this->belongsToMany('App\Models\Book', 'category_book');
     }
 
     /**
      * Get the Categories associated with the parent's `id`
      */
-    public function children()
+    public function childrenCategories()
     {
         return $this->hasMany(self::class, 'parent', 'id');
     }
@@ -39,9 +39,9 @@ class Category extends Model
     /**
      * Get the parent associated with the Category`s parent_id`
      */
-    public function parent()
+    public function parentCategory()
     {
-        return $this->belongsTo(self::class);
+        return $this->belongsTo(self::class, 'parent', 'id');
     }
 
     /**

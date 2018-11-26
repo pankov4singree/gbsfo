@@ -39,10 +39,21 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
-    public function deleteCategory($id = null, Request $request){
+    public function deleteCategory($id = null, Request $request)
+    {
         if ($request->user()->can('delete', Category::class)) {
-            echo 'good';
-        } else{
+            $category = Category::find($id);
+            $new_parent_cat_id = 0;
+            if(!empty($category->parentCategory->id)){
+                $new_parent_cat_id = $category->parentCategory->id;
+            }
+            foreach ($category->childrenCategories as $child){
+                $child->parent = $new_parent_cat_id;
+                $child->save();
+            }
+            $category->books()->detach();
+            $category->delete();
+        } else {
             abort(403);
         }
     }
