@@ -1,5 +1,24 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);@charset "UTF-8";
 
+#categories ul,
+#category ul {
+  list-style-type: none;
+}
+
+#category #parent {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: white;
+  height: auto;
+  border-radius: 4px;
+}
+
+#category #parent-field {
+  position: relative;
+}
+
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.

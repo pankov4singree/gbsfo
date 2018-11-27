@@ -1,24 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container" ng-controller="CategoryCtrl" ng-init="category = {{$category}}">
+    <div class="container" id="category" ng-controller="CategoryCtrl" ng-init="Category = {{$category}}">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Category</div>
+                    <div class="panel-heading">Category <%Category.name%></div>
 
                     <div class="panel-body">
                         <div class="panel">
-                            <div class="form-group">
+                            <div class="form-group" id="category-name">
                                 <label for="name">Name</label>
                                 <input name="name" class="form-control" id="name" placeholder="Name"
-                                       ng-model="category.name">
+                                       ng-model="Category.name">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="parent-field">
                                 <label for="parent">Parent</label>
-                                <ul id='parent' ng-if="Parents">
-                                    <li ng-repeat="(key, category) in Parents" id="parent-<%key%>" class="parent"><%
-                                        category.name %>
+                                <span ng-click="showParents = !showParents" class="form-control"
+                                      ng-bind-html="parentCategory.name"></span>
+                                <ul class="form-control" ng-show="showParents" id='parent' ng-if="Parents">
+                                    <li ng-if="category.id != Category.id"
+                                        ng-repeat="(key, category) in Parents"
+                                        ng-init="Category.parent == category.id ? setParent(category) : {}"
+                                        id="parent-<%key%>" class="parent">
+                                        <a href="#" ng-click="setParent(category);"><% category.name %></a>
                                         <ul ng-if="category.subitems"
                                             ng-include="'/angular-template/admin/parent-angular.html'"></ul>
                                     </li>

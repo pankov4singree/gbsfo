@@ -11,9 +11,13 @@ app.config(['$httpProvider', function ($httpProvider) {
 
 app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope, $http, $category) {
 
-    $scope.$watch('category', function () {
+    $scope.parentCategory = {};
 
-        var exclude_ids = [$scope.category.id];
+    $scope.showParents = false;
+
+    $scope.$watch('Category', function () {
+
+        var exclude_ids = [$scope.Category.id];
         $category.getCategories({'parent_id': 0, 'exclude_ids': exclude_ids}).then(function (response) {
             if (response.status == 200)
                 $scope.Parents = response.data;
@@ -22,6 +26,12 @@ app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope,
         }).catch(function (response) {
             $scope.Parents = [];
         });
+
+        $scope.setParent = function (category) {
+            $scope.parentCategory = category;
+            $scope.showParents = false;
+        }
+
     });
 
 }]);

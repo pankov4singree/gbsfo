@@ -1,3 +1,7 @@
-<li ng-repeat="(key, category) in category.subitems" id="parent-<%key%>" class="parent"><% category.name %>
+<li ng-if="category.id != Category.id"
+    ng-repeat="(key, category) in category.subitems"
+    ng-init="category.id == Category.parent ? setParent(category) : {}"
+    id="parent-<%key%>" class="parent">
+    <a href="#" ng-click="setParent(category);"><% category.name %></a>
     <ul ng-if="category.subitems" ng-include="'/angular-template/admin/parent-angular.html'"></ul>
 </li>
