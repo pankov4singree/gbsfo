@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $appends = ['subitems'];
-
     protected $user = null;
 
     public $subitems = [];
 
     public $routes = [];
+
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
 
     public function __construct(array $attributes = [])
     {
@@ -59,6 +61,10 @@ class Category extends Model
         }
         if ($this->user->can('get-edit-link', $this)) {
             $this->routes['edit'] = route('admin.category.edit', ['id' => $this->id]);
+        }
+        $this->routes['delete'] = false;
+        if ($this->user->can('get-delete-link', $this)) {
+            $this->routes['delete'] = true;
         }
         return $this->routes;
     }

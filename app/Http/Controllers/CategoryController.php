@@ -28,6 +28,21 @@ class CategoryController extends Controller
         }
     }
 
+    public function getCreateCategoryTemplateForAdmin(Request $request)
+    {
+        if ($request->user()->can('create', Category::class)) {
+            $category = new Category();
+            $category->parent = 0;
+            $category->name = "";
+            $category->id = 0;
+            return view('admin.categoryTemplate', [
+                'category' => $category
+            ]);
+        } else {
+            abort(403);
+        }
+    }
+
     public function getCategories(Request $request)
     {
         $data = $request->all();
@@ -40,7 +55,7 @@ class CategoryController extends Controller
         }
         $categories = Category::all();
         foreach ($categories as $category) {
-            $category->append(array('routes'));
+            $category->append(array('routes', 'subitems'));
         }
         $categories = build_tree($categories, $data['parent_id'], $exclude_ids);
         return response()->json($categories);
@@ -64,6 +79,46 @@ class CategoryController extends Controller
                 return response()->json(['status' => 'success']);
             }
             abort(404);
+        } else {
+            abort(403);
+        }
+    }
+
+    // добавить валидацию
+
+    public function createCategory(Request $request)
+    {
+        if ($request->user()->can('create', Category::class)) {
+            $data = $request->all();
+            $category = new Category();
+            $category->parent = strip_tags($data['parent']);
+            $category->name = strip_tags($data['name']);
+            if($category->save()){
+                return response()->json(['save' => true]);
+            } else {
+                return response()->json(['save' => false]);
+            }
+        } else {
+            abort(403);
+        }
+    }
+
+    public function updateCategory(Request $request)
+    {
+        if ($request->user()->can('edit', Category::class)) {
+            $data = $request->all();
+            $category = Category::find(strip_tags($data['id']));
+            if(!empty($category)) {
+                $category->parent = strip_tags($data['parent']);
+                $category->name = strip_tags($data['name']);
+                if ($category->save()) {
+                    return response()->json(['save' => true]);
+                } else {
+                    return response()->json(['save' => false]);
+                }
+            } else {
+                return response()->json(['save' => false]);
+            }
         } else {
             abort(403);
         }

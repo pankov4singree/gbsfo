@@ -11,9 +11,9 @@
                             <uL>
                                 <li ng-repeat="(key, category) in Categories" id="category-<%key%>" class="category">
                                     <div class="info" data-category="<%key%>">
-                                        <a ng-if="category.routes.edit" href="<%category.routes.edit%>"><%category.name%></a>
+                                        <a href="<%category.routes.edit%>"><%category.name%></a>
                                         <div class="control">
-                                            <a href="#" ng-click="deleteItem(category, {});">Удалить</a>
+                                            <a ng-show="category.routes.delete" href="#" ng-click="deleteItem(category, {});">Удалить</a>
                                         </div>
                                     </div>
                                     <ul ng-if="category.subitems" ng-init="parent_cat = category"

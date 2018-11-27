@@ -11,13 +11,21 @@ app.config(['$httpProvider', function ($httpProvider) {
 
 app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope, $http, $category) {
 
-    $scope.parentCategory = {};
-
     $scope.showParents = false;
+    $scope.defaultParent = {
+        id: 0,
+        name: 'Without category'
+    };
+    $scope.buttonTitle = 'Create';
+    $scope.parentCategory = $scope.defaultParent;
 
     $scope.$watch('Category', function () {
 
-        var exclude_ids = [$scope.Category.id];
+        var exclude_ids = [];
+        if ($scope.Category.id != 0) {
+            exclude_ids = [$scope.Category.id];
+            $scope.buttonTitle = 'Update';
+        }
         $category.getCategories({'parent_id': 0, 'exclude_ids': exclude_ids}).then(function (response) {
             if (response.status == 200)
                 $scope.Parents = response.data;
@@ -26,13 +34,37 @@ app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope,
         }).catch(function (response) {
             $scope.Parents = [];
         });
-
-        $scope.setParent = function (category) {
-            $scope.parentCategory = category;
-            $scope.showParents = false;
-        }
-
     });
+
+    $scope.setParent = function (category) {
+        $scope.parentCategory = category;
+        $scope.showParents = false;
+    };
+
+    $scope.resetCategory = function () {
+        $scope.parentCategory = $scope.defaultParent;
+        $scope.showParents = false;
+    };
+
+    $scope.save = function () {
+        $scope.Category.parent = $scope.parentCategory.id;
+        if ($category.validateCategory($scope.Category)) {
+            if ($scope.Category.id != 0) {
+                var response = $category.updateCategory($scope.Category);
+            } else {
+                var response = $category.createCategory($scope.Category);
+            }
+            response.then(function (response) {
+                if (response.status == 200 && response.data.save == true) {
+                    console.log('Done');
+                } else {
+                    alert('Что-то пошло не так. Сохранение не произошло');
+                }
+            }).catch(function (response) {
+                alert('Что-то пошло не так. Сохранение не произошло');
+            });
+        }
+    }
 
 }]);
 
@@ -79,8 +111,21 @@ app.factory('category', function ($http) {
     return {
         getCategories: function (object) {
             return $http.post('/api/categories', object);
+        },
+        createCategory: function (object) {
+            return $http.post('/api/categories/create', object);
+        },
+        updateCategory: function (object) {
+            return $http.put('/api/categories/update', object);
+        },
+        validateCategory: function (object) {
+            if (object.name == '') {
+                alert('Нельзя созранить категорию. Поле "название" пустое');
+                return false;
+            }
+            return true;
         }
-    }
+    };
 });
 
 app.directive('a', function () {
