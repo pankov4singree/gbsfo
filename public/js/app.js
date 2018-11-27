@@ -66995,11 +66995,22 @@ app.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 }]);
 
-app.controller('CategoriesCtrl', function ($scope, $http) {
+app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope, $http, $category) {
 
-    $scope.Categories = [];
+    $scope.$watch('category', function () {
 
-    $http.post('/api/categories', { 'parent_id': 0, 'exclude_id': [] }).then(function (response) {
+        var exclude_ids = [$scope.category.id];
+        $category.getCategories({ 'parent_id': 0, 'exclude_ids': exclude_ids }).then(function (response) {
+            if (response.status == 200) $scope.Parents = response.data;else $scope.Parents = [];
+        }).catch(function (response) {
+            $scope.Parents = [];
+        });
+    });
+}]);
+
+app.controller('CategoriesCtrl', ['$scope', '$http', 'category', function ($scope, $http, $category) {
+
+    $category.getCategories({ 'parent_id': 0, 'exclude_ids': [] }).then(function (response) {
         if (response.status == 200) $scope.Categories = response.data;else $scope.Categories = [];
     }).catch(function (response) {
         $scope.Categories = [];
@@ -67007,22 +67018,37 @@ app.controller('CategoriesCtrl', function ($scope, $http) {
 
     $scope.deleteItem = function (category, parent_cat) {
         $http.delete('/api/categories/delete/' + category.id).then(function (response) {
-            if (Object.keys(category.subitems).length) {
-                if (_typeof(parent_cat.subitems) != ( true ? 'undefined' : _typeof(undefined))) {
-                    for (var item in category.subitems) {
-                        parent_cat.subitems[item] = category.subitems[item];
+            if (response.data.status == 'success') {
+                if (Object.keys(category.subitems).length) {
+                    if (_typeof(parent_cat.subitems) != ( true ? 'undefined' : _typeof(undefined))) {
+                        for (var item in category.subitems) {
+                            parent_cat.subitems[item] = category.subitems[item];
+                        }
+                    } else {
+                        for (var item in category.subitems) {
+                            $scope.Categories[item] = category.subitems[item];
+                        }
                     }
+                }
+                if (_typeof(parent_cat.subitems) != ( true ? 'undefined' : _typeof(undefined))) {
                     delete parent_cat.subitems[category.id];
                 } else {
-                    for (var item in category.subitems) {
-                        $scope.Categories[item] = category.subitems[item];
-                    }
                     delete $scope.Categories[category.id];
                 }
+            } else {
+                alert('Нельзя удалить категорию');
             }
         }).catch(function (response) {
             alert('Нельзя удалить категорию');
         });
+    };
+}]);
+
+app.factory('category', function ($http) {
+    return {
+        getCategories: function getCategories(object) {
+            return $http.post('/api/categories', object);
+        }
     };
 });
 
