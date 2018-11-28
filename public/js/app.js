@@ -67041,10 +67041,10 @@ app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope,
                 if (response.status == 200 && response.data.save == true) {
                     console.log('Done');
                 } else {
-                    alert('Что-то пошло не так. Сохранение не произошло');
+                    alert('Что-то пошло не так. Сохранение не выполнено');
                 }
             }).catch(function (response) {
-                alert('Что-то пошло не так. Сохранение не произошло');
+                alert('Что-то пошло не так. Сохранение не выполнено');
             });
         }
     };
@@ -67099,7 +67099,7 @@ app.factory('category', function ($http) {
         },
         validateCategory: function validateCategory(object) {
             if (object.name == '') {
-                alert('Нельзя созранить категорию. Поле "название" пустое');
+                alert('Нельзя сохранить категорию. Поле "название" пустое');
                 return false;
             }
             return true;

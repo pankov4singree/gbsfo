@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Validator;
 
 class CategoryController extends Controller
 {
@@ -45,19 +46,20 @@ class CategoryController extends Controller
 
     public function getCategories(Request $request)
     {
-        $data = $request->all();
-        $data['parent_id'] = strip_tags($data['parent_id']);
-        $exclude_ids = [];
-        if (!empty($data['exclude_ids'])) {
-            foreach ($data['exclude_ids'] as $item) {
-                $exclude_ids[] = strip_tags($item);
-            }
+        $validator = Validator::make($request->all(), [
+            'parent_id' => 'required|integer',
+            'exclude_ids' => 'array',
+            'exclude_ids.*' => 'integer'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['save' => false, 'errors' => $validator->errors()]);
         }
+        $data = $validator->valid();
         $categories = Category::all();
         foreach ($categories as $category) {
             $category->append(array('routes', 'subitems'));
         }
-        $categories = build_tree($categories, $data['parent_id'], $exclude_ids);
+        $categories = build_tree($categories, $data['parent_id'], $data['exclude_ids']);
         return response()->json($categories);
     }
 
@@ -89,11 +91,19 @@ class CategoryController extends Controller
     public function createCategory(Request $request)
     {
         if ($request->user()->can('create', Category::class)) {
-            $data = $request->all();
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:255',
+                'parent' => 'required|integer',
+                'id' => 'required|integer'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['save' => false, 'errors' => $validator->errors()]);
+            }
+            $data = $validator->valid();
             $category = new Category();
-            $category->parent = strip_tags($data['parent']);
-            $category->name = strip_tags($data['name']);
-            if($category->save()){
+            $category->parent = $data['parent'];
+            $category->name = $data['name'];
+            if ($category->save()) {
                 return response()->json(['save' => true]);
             } else {
                 return response()->json(['save' => false]);
@@ -106,11 +116,19 @@ class CategoryController extends Controller
     public function updateCategory(Request $request)
     {
         if ($request->user()->can('edit', Category::class)) {
-            $data = $request->all();
-            $category = Category::find(strip_tags($data['id']));
-            if(!empty($category)) {
-                $category->parent = strip_tags($data['parent']);
-                $category->name = strip_tags($data['name']);
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:255',
+                'parent' => 'required|integer',
+                'id' => 'required|integer'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['save' => false, 'errors' => $validator->errors()]);
+            }
+            $data = $validator->valid();
+            $category = Category::find($data['id']);
+            if (!empty($category)) {
+                $category->parent = $data['parent'];
+                $category->name = $data['name'];
                 if ($category->save()) {
                     return response()->json(['save' => true]);
                 } else {

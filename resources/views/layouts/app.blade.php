@@ -25,14 +25,16 @@
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li {{ current_page('admin.home') ? 'class=active' : '' }} ><a
-                                href="{{route('admin.home')}}">Home</a></li>
-                    <li {{ current_page('admin.categories') ? 'class=active' : '' }}><a
-                                href="{{route('admin.categories')}}">Categories</a></li>
-                    <li {{ current_page('admin.authors') ? 'class=active' : '' }}><a
-                                href="{{route('admin.authors')}}">Authors</a></li>
-                </ul>
+                @auth
+                    <ul class="nav navbar-nav">
+                        <li {{ current_page('admin.home') ? 'class=active' : '' }} ><a
+                                    href="{{route('admin.home')}}">Home</a></li>
+                        <li {{ current_page('admin.categories') ? 'class=active' : '' }}><a
+                                    href="{{route('admin.categories')}}">Categories</a></li>
+                        <li {{ current_page('admin.authors') ? 'class=active' : '' }}><a
+                                    href="{{route('admin.authors')}}">Authors</a></li>
+                    </ul>
+                @endauth
                 <ul class="nav navbar-nav navbar-right">
                     @guest
                         <li><a href="{{ route('login') }}">Login</a></li>
