@@ -48,21 +48,30 @@ app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope,
 
     $scope.save = function () {
         $scope.Category.parent = $scope.parentCategory.id;
-        if ($category.validateCategory($scope.Category)) {
+        if ($category.validateCategory($scope.Category) && !$category.block_save) {
+            $category.block_save = true;
             if ($scope.Category.id != 0) {
-                var response = $category.updateCategory($scope.Category);
+                $category.updateCategory($scope.Category).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        alert('Обновлено');
+                        $category.block_save = false;
+                    } else {
+                        $category.showCategoryError(response.data.errors)
+                    }
+                }).catch(function (response) {
+                    $category.showCategoryError(response.data.errors)
+                });
             } else {
-                var response = $category.createCategory($scope.Category);
+                $category.createCategory($scope.Category).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        location.href = response.data.url;
+                    } else {
+                        $category.showCategoryError(response.data.errors);
+                    }
+                }).catch(function (response) {
+                    $category.showCategoryError(response.data.errors)
+                });
             }
-            response.then(function (response) {
-                if (response.status == 200 && response.data.save == true) {
-                    console.log('Done');
-                } else {
-                    alert('Что-то пошло не так. Сохранение не выполнено');
-                }
-            }).catch(function (response) {
-                alert('Что-то пошло не так. Сохранение не выполнено');
-            });
         }
     }
 
@@ -108,7 +117,8 @@ app.controller('CategoriesCtrl', ['$scope', '$http', 'category', function ($scop
 }]);
 
 app.factory('category', function ($http) {
-    return {
+    var category = {
+        block_save: false,
         getCategories: function (object) {
             return $http.post('/api/categories', object);
         },
@@ -124,8 +134,23 @@ app.factory('category', function ($http) {
                 return false;
             }
             return true;
+        },
+        showCategoryError: function (errors) {
+            category.block_save = false;
+            var error_text = "Что-то пошло не так. Сохранение не выполнено";
+            if(Object.keys(errors).length){
+                for(var error_block in errors){
+                    if(errors[error_block].length){
+                        for(var i = 0; i < errors[error_block].length; i++){
+                            error_text += "\n" + errors[error_block][i];
+                        }
+                    }
+                }
+            }
+            alert(error_text);
         }
     };
+    return category;
 });
 
 app.directive('a', function () {

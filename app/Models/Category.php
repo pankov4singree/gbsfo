@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
@@ -54,6 +55,9 @@ class Category extends Model
         return $this->subitems;
     }
 
+    /**
+     * @return array
+     */
     public function getRoutesAttribute()
     {
         if ($this->user->can('get-view-link', $this)) {
@@ -67,5 +71,14 @@ class Category extends Model
             $this->routes['delete'] = true;
         }
         return $this->routes;
+    }
+
+    public function getChildren()
+    {
+        $categories = $this->childrenCategories;
+        foreach ($categories as $category) {
+            $categories = $categories->merge($category->getChildren());
+        }
+        return $categories;
     }
 }

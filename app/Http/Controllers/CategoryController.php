@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Rules\AvailableParentForCategory;
 use Validator;
 
 class CategoryController extends Controller
@@ -47,9 +48,9 @@ class CategoryController extends Controller
     public function getCategories(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'parent_id' => 'required|integer',
-            'exclude_ids' => 'array',
-            'exclude_ids.*' => 'integer'
+            'parent_id' => array('required', 'integer'),
+            'exclude_ids' => array('array'),
+            'exclude_ids.*' => array('integer')
         ]);
         if ($validator->fails()) {
             return response()->json(['save' => false, 'errors' => $validator->errors()]);
@@ -92,9 +93,9 @@ class CategoryController extends Controller
     {
         if ($request->user()->can('create', Category::class)) {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|max:255',
-                'parent' => 'required|integer',
-                'id' => 'required|integer'
+                'name' => array('required', 'max:255'),
+                'parent' => array('required', 'integer'),
+                'id' => array('required', 'integer')
             ]);
             if ($validator->fails()) {
                 return response()->json(['save' => false, 'errors' => $validator->errors()]);
@@ -104,7 +105,7 @@ class CategoryController extends Controller
             $category->parent = $data['parent'];
             $category->name = $data['name'];
             if ($category->save()) {
-                return response()->json(['save' => true]);
+                return response()->json(['save' => true, 'url' => route('admin.category.edit', ['id' => $category->id])]);
             } else {
                 return response()->json(['save' => false]);
             }
@@ -117,15 +118,24 @@ class CategoryController extends Controller
     {
         if ($request->user()->can('edit', Category::class)) {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|max:255',
-                'parent' => 'required|integer',
-                'id' => 'required|integer'
+                'id' => array('required', 'integer')
             ]);
             if ($validator->fails()) {
                 return response()->json(['save' => false, 'errors' => $validator->errors()]);
             }
             $data = $validator->valid();
+
             $category = Category::find($data['id']);
+
+            $validator = Validator::make($request->all(), [
+                'name' => array('required', 'max:255'),
+                'parent' => array('required', 'integer', new AvailableParentForCategory($category))
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['save' => false, 'errors' => $validator->errors()]);
+            }
+            $data = $validator->valid();
+
             if (!empty($category)) {
                 $category->parent = $data['parent'];
                 $category->name = $data['name'];
