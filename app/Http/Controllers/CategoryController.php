@@ -4,16 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Rules\AvailableParentForCategory;
+use App\Rules\AvailableParent;
 use Validator;
 
 class CategoryController extends Controller
 {
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getCategoriesTemplateForAdmin()
     {
         return view('admin.categoriesTemplate');
     }
 
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getCategoryTemplateForAdmin($id = null, Request $request)
     {
         if ($request->user()->can('edit', Category::class)) {
@@ -30,6 +38,10 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getCreateCategoryTemplateForAdmin(Request $request)
     {
         if ($request->user()->can('create', Category::class)) {
@@ -45,6 +57,10 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getCategories(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -64,6 +80,11 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteCategory($id = null, Request $request)
     {
         if ($request->user()->can('delete', Category::class)) {
@@ -87,8 +108,10 @@ class CategoryController extends Controller
         }
     }
 
-    // добавить валидацию
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function createCategory(Request $request)
     {
         if ($request->user()->can('create', Category::class)) {
@@ -114,6 +137,10 @@ class CategoryController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateCategory(Request $request)
     {
         if ($request->user()->can('edit', Category::class)) {
@@ -129,7 +156,7 @@ class CategoryController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => array('required', 'max:255'),
-                'parent' => array('required', 'integer', new AvailableParentForCategory($category))
+                'parent' => array('required', 'integer', new AvailableParent($category))
             ]);
             if ($validator->fails()) {
                 return response()->json(['save' => false, 'errors' => $validator->errors()]);

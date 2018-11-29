@@ -60,24 +60,22 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::prefix('api')->group(function () {
     Route::prefix('categories')->group(function(){
         Route::post('/', 'CategoryController@getCategories')->name('api.categories');
-        Route::post('create', 'CategoryController@createCategory')->name('api.category.create');
-        Route::put('update', 'CategoryController@updateCategory')->name('api.category.update');
-        Route::delete('delete/{id}', 'CategoryController@deleteCategory')->name('api.category.delete')->where('id', '[0-9]+');
+        Route::post('create', 'CategoryController@createCategory')->name('api.category.create')->middleware('auth');
+        Route::put('update', 'CategoryController@updateCategory')->name('api.category.update')->middleware('auth');
+        Route::delete('delete/{id}', 'CategoryController@deleteCategory')->name('api.category.delete')->where('id', '[0-9]+')->middleware('auth');
     });
 
     Route::prefix('books')->group(function(){
         Route::get('/', 'BooksController@getBooks')->name('api.books');
-        Route::get('{id}', 'BooksController@getBook')->name('api.book.edit')->where('id', '[0-9]+');
-        Route::post('create', 'BooksController@createBook')->name('api.book.create');
-        Route::put('update', 'BooksController@updateBook')->name('api.book.update');
-        Route::delete('delete/{id}', 'BooksController@deleteBook')->name('api.book.delete')->where('id', '[0-9]+');
+        Route::post('create', 'BooksController@createBook')->name('api.book.create')->middleware('auth');
+        Route::put('update', 'BooksController@updateBook')->name('api.book.update')->middleware('auth');
+        Route::delete('delete/{id}', 'BooksController@deleteBook')->name('api.book.delete')->where('id', '[0-9]+')->middleware('auth');
     });
 
     Route::prefix('authors')->group(function(){
-        Route::get('/', 'AuthorController@getAuthors')->name('api.authors');
-        Route::get('{id}', 'AuthorController@getAuthor')->name('api.author.edit')->where('id', '[0-9]+');
-        Route::post('create', 'AuthorController@createAuthor')->name('api.author.create');
-        Route::put('update', 'AuthorController@updateAuthor')->name('api.author.update');
-        Route::delete('delete/{id}', 'AuthorController@deleteAuthor')->name('api.author.delete')->where('id', '[0-9]+');
+        Route::post('/', 'AuthorController@getAuthors')->name('api.authors');
+        Route::post('create', 'AuthorController@createAuthor')->name('api.author.create')->middleware('auth');
+        Route::put('update', 'AuthorController@updateAuthor')->name('api.author.update')->middleware('auth');
+        Route::delete('delete/{id}', 'AuthorController@deleteAuthor')->name('api.author.delete')->where('id', '[0-9]+')->middleware('auth');
     });
 });

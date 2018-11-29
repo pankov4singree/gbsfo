@@ -2,25 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Traits\LinkBuilder;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $user = null;
+    use LinkBuilder;
 
+    /**
+     * @var array $subitems
+     */
     public $subitems = [];
 
-    public $routes = [];
+    /**
+     * @var \App\User $user
+     */
+    protected $user = null;
 
+    /**
+     * @var array $hidden
+     */
     protected $hidden = [
         'created_at', 'updated_at'
     ];
 
+    /**
+     * Category constructor.
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->user = request()->user();
+        $this->route = 'category';
     }
 
     /**
@@ -56,23 +70,8 @@ class Category extends Model
     }
 
     /**
-     * @return array
+     * @return mixed
      */
-    public function getRoutesAttribute()
-    {
-        if ($this->user->can('get-view-link', $this)) {
-            $this->routes['view'] = route('category.view', ['name' => str_slug($this->name), 'id' => $this->id]);
-        }
-        if ($this->user->can('get-edit-link', $this)) {
-            $this->routes['edit'] = route('admin.category.edit', ['id' => $this->id]);
-        }
-        $this->routes['delete'] = false;
-        if ($this->user->can('get-delete-link', $this)) {
-            $this->routes['delete'] = true;
-        }
-        return $this->routes;
-    }
-
     public function getChildren()
     {
         $categories = $this->childrenCategories;
@@ -80,5 +79,13 @@ class Category extends Model
             $categories = $categories->merge($category->getChildren());
         }
         return $categories;
+    }
+
+    /**
+     *
+     */
+    public function getTitleForRouteAttribute()
+    {
+        $this->title_for_route = $this->name;
     }
 }

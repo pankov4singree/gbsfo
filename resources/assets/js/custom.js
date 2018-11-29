@@ -116,6 +116,38 @@ app.controller('CategoriesCtrl', ['$scope', '$http', 'category', function ($scop
     }
 }]);
 
+app.controller('AuthorsCtrl', ['$scope', '$http', 'author', function ($scope, $http, $author) {
+
+    $scope.showLoadMore = false;
+    $scope.Authors = [];
+    $scope.currentPage = 1;
+
+    $scope.loadAuthors = function () {
+        $author.getAuthors({'page': $scope.currentPage}).then(function (response) {
+            if (response.status == 200) {
+                $scope.pushAuthors(response.data);
+            } else
+                alert('Something went wrong');
+
+        }).catch(function (response) {
+            alert('Something went wrong');
+        });
+    };
+
+    $scope.loadAuthors();
+
+    $scope.pushAuthors = function (response) {
+        $scope.Authors = $scope.Authors.concat(response.data);
+        $scope.showLoadMore = response.current_page < response.last_page;
+        $scope.currentPage++;
+    };
+
+    $scope.loadMore = function () {
+        $scope.loadAuthors();
+    }
+
+}]);
+
 app.factory('category', function ($http) {
     var category = {
         block_save: false,
@@ -138,10 +170,10 @@ app.factory('category', function ($http) {
         showCategoryError: function (errors) {
             category.block_save = false;
             var error_text = "Что-то пошло не так. Сохранение не выполнено";
-            if(Object.keys(errors).length){
-                for(var error_block in errors){
-                    if(errors[error_block].length){
-                        for(var i = 0; i < errors[error_block].length; i++){
+            if (Object.keys(errors).length) {
+                for (var error_block in errors) {
+                    if (errors[error_block].length) {
+                        for (var i = 0; i < errors[error_block].length; i++) {
                             error_text += "\n" + errors[error_block][i];
                         }
                     }
@@ -151,6 +183,33 @@ app.factory('category', function ($http) {
         }
     };
     return category;
+});
+
+app.factory('author', function ($http) {
+    var author = {
+        block_save: false,
+        getAuthors: function (object) {
+            return $http.post('/api/authors', object);
+        },
+        createAuthor: function (object) {
+            return $http.post('/api/authors/create', object);
+        },
+        updateAuthor: function (object) {
+            return $http.put('/api/authors/update', object);
+        },
+        validateAuthor: function (object) {
+            if (object.first_name == '') {
+                alert('Нельзя сохранить категорию. Поле "Имя" пустое');
+                return false;
+            }
+            if (object.last_name == '') {
+                alert('Нельзя сохранить категорию. Поле "Фамилия" пустое');
+                return false;
+            }
+            return true;
+        }
+    };
+    return author;
 });
 
 app.directive('a', function () {

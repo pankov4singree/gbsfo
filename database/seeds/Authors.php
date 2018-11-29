@@ -29,7 +29,7 @@ class Authors extends Seeder
     public function run()
     {
         foreach ($this->authors as $author) {
-            (new Author(['first_name' => $author[0], 'last_name' => $author[0]]))->save();
+            (new Author(['first_name' => $author[0], 'last_name' => $author[1]]))->save();
         }
     }
 }
