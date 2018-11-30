@@ -85,7 +85,7 @@ class BooksController extends Controller
                 if ($request->hasFile('photo')) {
                     $book->setNewPhoto($data['photo']);
                 } else {
-                    $book->photo = "";
+                    $book->photo = $book->photo;
                 }
                 if ($book->save()) {
                     $book->authors()->sync($data['author_ids']);

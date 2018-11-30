@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.backend.app')
 
 @section('content')
     <div class="container" id="authors" ng-controller="AuthorsCtrl">

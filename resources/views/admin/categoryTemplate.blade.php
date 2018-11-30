@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.backend.app')
 
 @section('content')
     <div class="container" id="category" ng-controller="CategoryCtrl" ng-init="Category = {{$category}}">
