@@ -66,7 +66,7 @@ Route::prefix('api')->group(function () {
     });
 
     Route::prefix('books')->group(function(){
-        Route::get('/', 'BooksController@getBooks')->name('api.books');
+        Route::post('/', 'BooksController@getBooks')->name('api.books');
         Route::post('create', 'BooksController@createBook')->name('api.book.create')->middleware('auth');
         Route::post('update', 'BooksController@updateBook')->name('api.book.update')->middleware('auth');
         Route::delete('delete/{id}', 'BooksController@deleteBook')->name('api.book.delete')->where('id', '[0-9]+')->middleware('auth');

@@ -42,8 +42,7 @@
                                                       ng-click="toggleSelection(author.id, 'author_ids')"
                                                       value="<%author.id%>"
                                                       ng-checked="Book.author_ids.indexOf(author.id) > -1">
-                                            <%category.name%></label>
-                                        <%author.first_name%> <%author.last_name%>
+                                            <%author.first_name%> <%author.last_name%></label>
                                     </li>
                                 </ul>
                             </div>

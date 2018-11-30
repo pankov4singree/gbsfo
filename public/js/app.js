@@ -67263,7 +67263,18 @@ app.factory('book', function ($http) {
             return $http.post('/api/books', object);
         },
         createBook: function createBook(object) {
-            return $http.post('/api/books/create', object);
+            var form = new FormData();
+            for (var key in object) {
+                if (object[key] instanceof Array) {
+                    form.append(key, JSON.stringify(object[key]));
+                } else {
+                    form.append(key, object[key]);
+                }
+            }
+            return $http.post('/api/books/create', form, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            });
         },
         updateBook: function updateBook(object) {
             var form = new FormData();
@@ -67281,7 +67292,7 @@ app.factory('book', function ($http) {
         },
         validateBook: function validateBook(object) {
             if (object.name == '') {
-                alert('Field "First Name" is required');
+                alert('Field "Name" is required');
                 return false;
             }
             return true;
@@ -67356,7 +67367,6 @@ app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($s
         } else {
             $scope.Book[field].push(id);
         }
-        console.log($scope.Book[field]);
     };
 
     $scope.$watch('Book', function () {
@@ -67367,7 +67377,31 @@ app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($s
 
     $scope.save = function () {
         $scope.Book.photo = $scope.file;
-        $book.updateBook($scope.Book);
+        if ($book.validateBook($scope.Book) && !$book.block_save) {
+            if ($scope.Book.id != 0) {
+                $book.updateBook($scope.Book).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        alert('Updated');
+                        $book.block_save = false;
+                    } else {
+                        $book.showBookError(response.data.errors);
+                    }
+                }).catch(function (response) {
+                    $book.showBookError(response.data.errors);
+                });
+            } else {
+                $book.createBook($scope.Book).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        location.href = response.data.url;
+                    } else {
+                        $book.showBookError(response.data.errors);
+                    }
+                }).catch(function (response) {
+                    $book.showBookError(response.data.errors);
+                });
+                ;
+            }
+        }
     };
 }]);
 
