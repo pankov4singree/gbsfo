@@ -17,7 +17,7 @@ class AddBookTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('photo_url');
+            $table->string('photo');
             $table->timestamps();
         });
     }

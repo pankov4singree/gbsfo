@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container" id="categories" ng-controller="AuthorsCtrl">
+    <div class="container" id="authors" ng-controller="AuthorsCtrl">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
@@ -11,7 +11,7 @@
                     <div class="panel-body">
                         <div class="panel panel-default">
                             <uL>
-                                <li ng-repeat="(key, author) in Authors" id="author-<%key%>" class="author">
+                                <li ng-repeat="(key, author) in Authors" id="author-<%author.id%>" class="author">
                                     <div class="info">
                                         <a href="<%author.routes.edit%>"><%author.first_name%> <%author.last_name%></a>
                                         <div class="control">

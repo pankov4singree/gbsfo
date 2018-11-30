@@ -1,7 +1,5 @@
-#categories, #category {
-  ul {
-    list-style-type: none;
-  }
+ul {
+  list-style-type: none;
 }
 
 #category {
@@ -16,5 +14,13 @@
   }
   #parent-field{
     position: relative;
+  }
+}
+
+#book {
+  #categories,
+  #authors {
+    overflow-y: scroll;
+    max-height: 200px;
   }
 }

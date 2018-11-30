@@ -1,7 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);@charset "UTF-8";
 
-#categories ul,
-#category ul {
+ul {
   list-style-type: none;
 }
 
@@ -17,6 +16,12 @@
 
 #category #parent-field {
   position: relative;
+}
+
+#book #categories,
+#book #authors {
+  overflow-y: scroll;
+  max-height: 200px;
 }
 
 /*!

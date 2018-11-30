@@ -1,0 +1,7 @@
+<li ng-repeat="(key, category) in category.subitems">
+    <label><input type="checkbox" name="category[]" ng-click="toggleSelection(category.id, 'category_ids')"
+                  value="<%category.id%>" ng-checked="Book.category_ids.indexOf(category.id) > -1">
+        <%category.name%></label>
+    <ul ng-if="category.subitems"
+        ng-include="'/angular-template/admin/book-categories.html'"></ul>
+</li>

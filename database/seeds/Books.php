@@ -21,7 +21,7 @@ class Books extends Seeder
             $second_category = Category::inRandomOrder()->where('id', '!=', $firs_category->id)->first();
             $book = new Book();
             $book->name = 'Lorem ipsum dolor sit amet ' . $i;
-            $book->photo_url = "";
+            $book->photo = "";
             $book->save();
             $book->authors()->sync([$firs_author->id, $second_author->id]);
             $book->categories()->sync([$firs_category->id, $second_category->id]);

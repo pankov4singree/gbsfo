@@ -67036,7 +67036,7 @@ app.controller('CategoryCtrl', ['$scope', '$http', 'category', function ($scope,
             if ($scope.Category.id != 0) {
                 $category.updateCategory($scope.Category).then(function (response) {
                     if (response.status == 200 && response.data.save == true) {
-                        alert('Обновлено');
+                        alert('Updated');
                         $category.block_save = false;
                     } else {
                         $category.showCategoryError(response.data.errors);
@@ -67087,10 +67087,10 @@ app.controller('CategoriesCtrl', ['$scope', '$http', 'category', function ($scop
                     delete $scope.Categories[category.id];
                 }
             } else {
-                alert('Нельзя удалить категорию');
+                alert('You can\'t delete category');
             }
         }).catch(function (response) {
-            alert('Нельзя удалить категорию');
+            alert('You can\'t delete category');
         });
     };
 }]);
@@ -67122,6 +67122,60 @@ app.controller('AuthorsCtrl', ['$scope', '$http', 'author', function ($scope, $h
     $scope.loadMore = function () {
         $scope.loadAuthors();
     };
+
+    $scope.deleteItem = function (author) {
+        $http.delete('/api/authors/delete/' + author.id).then(function (response) {
+            if (response.data.status == 'success') {
+                for (var item in $scope.Authors) {
+                    if ($scope.Authors[item].id == author.id) {
+                        $scope.Authors.splice(item, 1);
+                    }
+                }
+            } else {
+                alert('You can\'t delete author');
+            }
+        }).catch(function (response) {
+            alert('You can\'t delete author');
+        });
+    };
+}]);
+
+app.controller('AuthorCtrl', ['$scope', '$http', 'author', function ($scope, $http, $author) {
+    $scope.buttonTitle = 'Create';
+
+    $scope.$watch('Author', function () {
+        if ($scope.Author.id != 0) {
+            $scope.buttonTitle = 'Update';
+        }
+    });
+
+    $scope.save = function () {
+        if ($author.validateAuthor($scope.Author) && !$author.block_save) {
+            $author.block_save = true;
+            if ($scope.Author.id != 0) {
+                $author.updateAuthor($scope.Author).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        alert('Updated');
+                        $author.block_save = false;
+                    } else {
+                        $author.showAuthorError(response.data.errors);
+                    }
+                }).catch(function (response) {
+                    $author.showAuthorError(response.data.errors);
+                });
+            } else {
+                $author.createAuthor($scope.Author).then(function (response) {
+                    if (response.status == 200 && response.data.save == true) {
+                        location.href = response.data.url;
+                    } else {
+                        $author.showAuthorError(response.data.errors);
+                    }
+                }).catch(function (response) {
+                    $author.showAuthorError(response.data.errors);
+                });
+            }
+        }
+    };
 }]);
 
 app.factory('category', function ($http) {
@@ -67138,14 +67192,14 @@ app.factory('category', function ($http) {
         },
         validateCategory: function validateCategory(object) {
             if (object.name == '') {
-                alert('Нельзя сохранить категорию. Поле "название" пустое');
+                alert('Field "name" is required');
                 return false;
             }
             return true;
         },
         showCategoryError: function showCategoryError(errors) {
             category.block_save = false;
-            var error_text = "Что-то пошло не так. Сохранение не выполнено";
+            var error_text = "Something went wrong. Save failed";
             if (Object.keys(errors).length) {
                 for (var error_block in errors) {
                     if (errors[error_block].length) {
@@ -67175,18 +67229,147 @@ app.factory('author', function ($http) {
         },
         validateAuthor: function validateAuthor(object) {
             if (object.first_name == '') {
-                alert('Нельзя сохранить категорию. Поле "Имя" пустое');
+                alert('Field "First Name" is required');
                 return false;
             }
             if (object.last_name == '') {
-                alert('Нельзя сохранить категорию. Поле "Фамилия" пустое');
+                alert('Field "Last Name" is required');
                 return false;
             }
             return true;
+        },
+        showAuthorError: function showAuthorError(errors) {
+            category.block_save = false;
+            var error_text = "Something went wrong. Save failed";
+            if (Object.keys(errors).length) {
+                for (var error_block in errors) {
+                    if (errors[error_block].length) {
+                        for (var i = 0; i < errors[error_block].length; i++) {
+                            error_text += "\n" + errors[error_block][i];
+                        }
+                    }
+                }
+            }
+            alert(error_text);
         }
     };
     return author;
 });
+
+app.factory('book', function ($http) {
+    var book = {
+        block_save: false,
+        getBooks: function getBooks(object) {
+            return $http.post('/api/books', object);
+        },
+        createBook: function createBook(object) {
+            return $http.post('/api/books/create', object);
+        },
+        updateBook: function updateBook(object) {
+            var form = new FormData();
+            for (var key in object) {
+                if (object[key] instanceof Array) {
+                    form.append(key, JSON.stringify(object[key]));
+                } else {
+                    form.append(key, object[key]);
+                }
+            }
+            return $http.post('/api/books/update', form, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            });
+        },
+        validateBook: function validateBook(object) {
+            if (object.name == '') {
+                alert('Field "First Name" is required');
+                return false;
+            }
+            return true;
+        },
+        showBookError: function showBookError(errors) {
+            category.block_save = false;
+            var error_text = "Something went wrong. Save failed";
+            if (Object.keys(errors).length) {
+                for (var error_block in errors) {
+                    if (errors[error_block].length) {
+                        for (var i = 0; i < errors[error_block].length; i++) {
+                            error_text += "\n" + errors[error_block][i];
+                        }
+                    }
+                }
+            }
+            alert(error_text);
+        }
+    };
+    return book;
+});
+
+app.directive('fileModel', function () {
+
+    var default_file = {
+        name: "Select Photo"
+    };
+
+    return {
+        restrict: 'A',
+        link: function link($scope, $element, $attrs) {
+
+            $scope.file = default_file;
+
+            $element.bind('change', function () {
+                $scope.$apply(function () {
+                    if ($element[0].files.length) {
+                        $scope.file = $element[0].files[0];
+                    } else {
+                        $scope.file = default_file;
+                    }
+                });
+            });
+        }
+    };
+});
+
+app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($scope, $category, $author, $book) {
+
+    $scope.buttonTitle = 'Create';
+    $scope.Authors = [];
+    $scope.Categories = [];
+
+    $category.getCategories({ 'parent_id': 0, 'exclude_ids': [] }).then(function (response) {
+        if (response.status == 200) $scope.Categories = response.data;else alert('Something went wrong with load categories');
+    }).catch(function (response) {
+        alert('Something went wrong with load categories');
+    });
+
+    $author.getAuthors({ 'page': 0 }).then(function (response) {
+        if (response.status == 200) {
+            $scope.Authors = response.data;
+        } else alert('Something went wrong with load authors');
+    }).catch(function (response) {
+        alert('Something went wrong with load authors');
+    });
+
+    $scope.toggleSelection = function (id, field) {
+        var idx = $scope.Book[field].indexOf(id);
+        if (idx > -1) {
+            $scope.Book[field].splice(idx, 1);
+        } else {
+            $scope.Book[field].push(id);
+        }
+        console.log($scope.Book[field]);
+    };
+
+    $scope.$watch('Book', function () {
+        if ($scope.Book.id != 0) {
+            $scope.buttonTitle = 'Update';
+        }
+    });
+
+    $scope.save = function () {
+        $scope.Book.photo = $scope.file;
+        $book.updateBook($scope.Book);
+    };
+}]);
 
 app.directive('a', function () {
     return {

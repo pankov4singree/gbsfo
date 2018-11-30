@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Rules\AvailableParent;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -117,7 +117,7 @@ class CategoryController extends Controller
         if ($request->user()->can('create', Category::class)) {
             $validator = Validator::make($request->all(), [
                 'name' => array('required', 'max:255'),
-                'parent' => array('required', 'integer'),
+                'parent' => array('required', 'integer', 'min:0'),
                 'id' => array('required', 'integer')
             ]);
             if ($validator->fails()) {
@@ -145,7 +145,7 @@ class CategoryController extends Controller
     {
         if ($request->user()->can('edit', Category::class)) {
             $validator = Validator::make($request->all(), [
-                'id' => array('required', 'integer')
+                'id' => array('required', 'integer', 'min:1')
             ]);
             if ($validator->fails()) {
                 return response()->json(['save' => false, 'errors' => $validator->errors()]);
@@ -156,7 +156,7 @@ class CategoryController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => array('required', 'max:255'),
-                'parent' => array('required', 'integer', new AvailableParent($category))
+                'parent' => array('required', 'integer', new AvailableParent($category), 'min:0')
             ]);
             if ($validator->fails()) {
                 return response()->json(['save' => false, 'errors' => $validator->errors()]);
