@@ -62,6 +62,7 @@
     </nav>
     @yield('content')
 </div>
+<script src="{{ asset('backend/js/library.js') }}"></script>
 <script src="{{ asset('backend/js/app.js') }}"></script>
 </body>
 </html>
