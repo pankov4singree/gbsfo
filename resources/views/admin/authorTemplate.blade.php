@@ -8,12 +8,12 @@
                     <div class="panel-heading"><%Author.first_name%> <%Author.last_name%></div>
 
                     <div class="panel-body">
-                        <div class="form-group" id="category-name">
+                        <div class="form-group" id="first-name">
                             <label for="first-name">First Name</label>
                             <input name="first-name" class="form-control" id="first-name" placeholder="First Name"
                                    ng-model="Author.first_name">
                         </div>
-                        <div class="form-group" id="category-name">
+                        <div class="form-group" id="last-name">
                             <label for="last-name">Name</label>
                             <input name="last-name" class="form-control" id="last-name" placeholder="Last Name"
                                    ng-model="Author.last_name">

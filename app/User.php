@@ -30,7 +30,25 @@ class User extends Authenticatable
     /**
      * get roles
      */
-    public function roles(){
+    public function roles()
+    {
         return $this->belongsToMany('App\Models\Role');
+    }
+
+    /**
+     * @param string $route
+     * @param string $title
+     * @return string
+     */
+    public function buildAdminLink($route = "admin.home", $title = "Admin")
+    {
+        if (!empty($this->roles)) {
+            foreach ($this->roles as $role) {
+                if ($role->role == 'admin') {
+                    return '<a class="pull-right" href="' . route($route) . '">' . $title . '</a>';
+                }
+            }
+        }
+        return '';
     }
 }

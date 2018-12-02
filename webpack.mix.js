@@ -18,6 +18,11 @@ mix.js('resources/assets/js/backend/require.js', 'public/backend/js/library.js')
         'resources/assets/js/backend/directives.js',
         'resources/assets/js/factories.js'
     ],'public/backend/js/app.js')
-    .js('resources/assets/js/frontend/require.js', 'public/frontend/js/app.js')
+    .js('resources/assets/js/frontend/require.js', 'public/frontend/js/library.js')
+    .scripts([
+        'resources/assets/js/frontend/application.js',
+        'resources/assets/js/frontend/controllers.js',
+        'resources/assets/js/factories.js'
+    ],'public/frontend/js/app.js')
     .sass('resources/assets/sass/backend/app.scss', 'public/backend/css')
     .sass('resources/assets/sass/frontend/app.scss', 'public/frontend/css');

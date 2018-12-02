@@ -1,4 +1,3 @@
-require('../../../../node_modules/angular/angular');
-require('../../../../node_modules/angular-sanitize/angular-sanitize');
-require('./application');
+require('../../../../node_modules/angular/angular.min');
+require('../../../../node_modules/angular-sanitize/angular-sanitize.min');
 require('../bootstrap');

@@ -1,0 +1,7 @@
+<li ng-repeat="(key, category) in category.subitems" id="category-<%key%>" class="category">
+    <div class="info" data-category="<%key%>">
+        <a href="<%category.routes.view%>"><%category.name%></a>
+    </div>
+    <ul ng-if="category.subitems" ng-init="parent_cat = category"
+        ng-include="'/angular-template/frontend/category-angular.html'"></ul>
+</li>

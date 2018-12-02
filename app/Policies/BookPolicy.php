@@ -10,6 +10,10 @@ class BookPolicy
 {
     use HandlesAuthorization, LinkAccess;
 
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function edit(User $user)
     {
         foreach ($user->roles as $role) {
@@ -20,6 +24,10 @@ class BookPolicy
         return false;
     }
 
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function delete(User $user)
     {
         foreach ($user->roles as $role) {
@@ -30,6 +38,10 @@ class BookPolicy
         return false;
     }
 
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function create(User $user)
     {
         foreach ($user->roles as $role) {
@@ -40,6 +52,10 @@ class BookPolicy
         return false;
     }
 
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function update(User $user)
     {
         foreach ($user->roles as $role) {
@@ -48,15 +64,5 @@ class BookPolicy
             }
         }
         return false;
-    }
-
-    /**
-     * Create a new policy instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
     }
 }

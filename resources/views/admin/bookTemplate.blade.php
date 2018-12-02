@@ -8,16 +8,13 @@
                     <div class="panel-heading"><%Book.name%></div>
 
                     <div class="panel-body">
-                        <div class="form-group" id="category-name">
+                        <div class="form-group" id="book-name">
                             <label for="name">Name</label>
-                            <input name="name" class="form-control" id="name" placeholder="Name"
+                            <input name="name" class="form-control" id="book-name" placeholder="Name"
                                    ng-model="Book.name">
                         </div>
-                        <div class="form-group" id="category-name">
-                            <label for="photo">Photo
-                                <span class="form-control btn btn-primary"><%file.name%></span>
-                            </label>
-                            <input ng-show="false" type="file" file-model name="photo" class="form-control" id="photo">
+                        <div class="form-group">
+                            <file-uploader model="Book" field="photo" id="custom-uploader"></file-uploader>
                         </div>
                         <div class="row">
                             <div class="col-md-6">

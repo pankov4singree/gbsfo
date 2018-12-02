@@ -15,11 +15,6 @@ class Category extends Model
     public $subitems = [];
 
     /**
-     * @var \App\User $user
-     */
-    protected $user = null;
-
-    /**
      * @var array $hidden
      */
     protected $hidden = [
@@ -33,8 +28,7 @@ class Category extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->user = request()->user();
-        $this->route = 'category';
+        $this->route = 'categories';
     }
 
     /**
@@ -70,7 +64,7 @@ class Category extends Model
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getChildren()
     {
@@ -82,7 +76,7 @@ class Category extends Model
     }
 
     /**
-     *
+     * setter for $title_for_route in trait LinkBuilder
      */
     public function getTitleForRouteAttribute()
     {

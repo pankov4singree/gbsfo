@@ -187,7 +187,7 @@ app.controller('AuthorCtrl', ['$scope', '$http', 'author', function ($scope, $ht
         }
     }
 }]);
-app.controller('BooksCtrl', ['$scope', 'book', function ($scope, $book) {
+app.controller('BooksCtrl', ['$scope', 'book', '$http', function ($scope, $book, $http) {
 
     $scope.showLoadMore = false;
     $scope.Books = [];
@@ -226,10 +226,10 @@ app.controller('BooksCtrl', ['$scope', 'book', function ($scope, $book) {
                     }
                 }
             } else {
-                alert('You can\'t delete author');
+                alert('You can\'t delete book');
             }
         }).catch(function (response) {
-            alert('You can\'t delete author');
+            alert('You can\'t delete book');
         });
     }
 }]);
@@ -270,7 +270,6 @@ app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($s
         if ($scope.Book.id != 0) {
             $scope.buttonTitle = 'Update';
         }
-
     });
 
     $scope.save = function () {

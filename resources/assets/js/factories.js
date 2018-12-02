@@ -97,7 +97,7 @@ app.factory('book', function ($http) {
         updateBook: function (object) {
             var form = new FormData();
             for (var key in object) {
-                if (object[key] instanceof Array) {
+                if (Array.isArray(object[key])) {
                     form.append(key, JSON.stringify(object[key]));
                 } else {
                     form.append(key, object[key]);
@@ -116,7 +116,7 @@ app.factory('book', function ($http) {
             return true;
         },
         showBookError: function (errors) {
-            category.block_save = false;
+            book.block_save = false;
             var error_text = "Something went wrong. Save failed";
             if (Object.keys(errors).length) {
                 for (var error_block in errors) {

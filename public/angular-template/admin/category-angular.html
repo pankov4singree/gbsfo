@@ -2,7 +2,7 @@
     <div class="info" data-category="<%key%>">
         <a href="<%category.routes.edit%>"><%category.name%></a>
         <div class="control">
-            <a ng-show="category.routes.delete" href="#" ng-click="deleteItem(category, parent_cat);">Удалить</a>
+            <a href="#" ng-click="deleteItem(category, parent_cat);">Удалить</a>
         </div>
     </div>
     <ul ng-if="category.subitems" ng-init="parent_cat = category"

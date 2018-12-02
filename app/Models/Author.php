@@ -9,6 +9,9 @@ class Author extends Model
 {
     use LinkBuilder;
 
+    /**
+     * @var int $perPage
+     */
     protected $perPage = 5;
 
     /**
@@ -19,19 +22,13 @@ class Author extends Model
     ];
 
     /**
-     * @var \App\User $user
-     */
-    protected $user = null;
-
-    /**
      * Author constructor.
      * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->user = request()->user();
-        $this->route = 'author';
+        $this->route = 'authors';
     }
 
     /**
@@ -43,7 +40,7 @@ class Author extends Model
     }
 
     /**
-     *
+     * setter for $title_for_route in trait LinkBuilder
      */
     public function getTitleForRouteAttribute()
     {

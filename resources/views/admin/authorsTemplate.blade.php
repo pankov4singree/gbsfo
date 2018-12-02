@@ -6,7 +6,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
                     <div class="panel-heading">Authors<a class="pull-right"
-                                                            href="{{ route('admin.author.create') }}">Create new
+                                                            href="{{ route('admin.authors.create') }}">Create new
                             author</a></div>
                     <div class="panel-body">
                         <div class="panel panel-default">
@@ -15,8 +15,7 @@
                                     <div class="info">
                                         <a href="<%author.routes.edit%>"><%author.first_name%> <%author.last_name%></a>
                                         <div class="control">
-                                            <a ng-show="author.routes.delete" href="#"
-                                               ng-click="deleteItem(author);">Удалить</a>
+                                            <a href="#" ng-click="deleteItem(author);">Удалить</a>
                                         </div>
                                     </div>
                                 </li>

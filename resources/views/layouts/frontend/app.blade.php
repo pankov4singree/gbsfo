@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('frontend/css/app.css') }}" rel="stylesheet">
 </head>
 <body>
 <div id="app" ng-app="app">
@@ -25,16 +25,14 @@
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
-                @auth
-                    <ul class="nav navbar-nav">
-                        <li {{ current_page('admin.home') ? 'class=active' : '' }} ><a
-                                    href="{{route('admin.home')}}">Home</a></li>
-                        <li {{ current_page('admin.categories') ? 'class=active' : '' }}><a
-                                    href="{{route('admin.categories')}}">Categories</a></li>
-                        <li {{ current_page('admin.authors') ? 'class=active' : '' }}><a
-                                    href="{{route('admin.authors')}}">Authors</a></li>
-                    </ul>
-                @endauth
+                <ul class="nav navbar-nav">
+                    <li {{ current_page('home') ? 'class=active' : '' }} ><a
+                                href="{{route('home')}}">Home</a></li>
+                    <li {{ current_page('categories') ? 'class=active' : '' }}><a
+                                href="{{route('categories')}}">Categories</a></li>
+                    <li {{ current_page('authors') ? 'class=active' : '' }}><a
+                                href="{{route('authors')}}">Authors</a></li>
+                </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @guest
                         <li><a href="{{ route('login') }}">Login</a></li>
@@ -62,6 +60,7 @@
     </nav>
     @yield('content')
 </div>
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('frontend/js/library.js') }}"></script>
+<script src="{{ asset('frontend/js/app.js') }}"></script>
 </body>
 </html>

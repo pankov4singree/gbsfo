@@ -4,9 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use App\Models\Traits\LinkBuilder;
 
 class Book extends Model
 {
+    use LinkBuilder;
+
+    /**
+     * @var int $perPage
+     */
+    protected $perPage = 10;
 
     /**
      * @var array $hidden
@@ -14,6 +21,16 @@ class Book extends Model
     protected $hidden = [
         'created_at', 'updated_at'
     ];
+
+    /**
+     * Book constructor.
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->route = 'books';
+    }
 
     /**
      * get authors
@@ -48,6 +65,17 @@ class Book extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getPhotoUrl()
+    {
+        if (!empty($this->photo)) {
+            return self::publicPathForImage() . $this->photo;
+        }
+        return '';
+    }
+
+    /**
      * @param string $type
      * @return string
      */
@@ -55,9 +83,9 @@ class Book extends Model
     {
         switch ($type) {
             case 'path':
-                return public_path('images/books/');
+                return public_path('images/books') . '/';
             case 'link':
-                return url('image/books/');
+                return url('images/books') . '/';
             default:
                 return '';
         }
@@ -70,7 +98,7 @@ class Book extends Model
     public function setNewPhoto(UploadedFile $file)
     {
         if (!empty($file)) {
-            @unlink(self::publicPathForImage('path') . $this->photo);
+            $this->deletePhoto();
             $i = 0;
             do {
                 $i++;
@@ -80,5 +108,18 @@ class Book extends Model
             $this->photo = $new_name;
         }
         return false;
+    }
+
+    /**
+     * setter for $title_for_route in trait LinkBuilder
+     */
+    public function getTitleForRouteAttribute()
+    {
+        $this->title_for_route = $this->name;
+    }
+
+    public function deletePhoto()
+    {
+        @unlink(self::publicPathForImage('path') . $this->photo);
     }
 }

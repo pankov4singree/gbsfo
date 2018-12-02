@@ -18,6 +18,24 @@ class CategoryController extends Controller
     }
 
     /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCategoriesTemplate()
+    {
+        return view('frontend.categoriesTemplate');
+    }
+
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCategoryTemplate($nmae = null, $id = null, Request $request)
+    {
+        return $this->getSingleTemplate($id, 'frontend');
+    }
+
+    /**
      * @param null $id
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -25,14 +43,7 @@ class CategoryController extends Controller
     public function getCategoryTemplateForAdmin($id = null, Request $request)
     {
         if ($request->user()->can('edit', Category::class)) {
-            $category = Category::find($id);
-            if (!empty($category)) {
-                return view('admin.categoryTemplate', [
-                    'category' => $category
-                ]);
-            } else {
-                abort(404);
-            }
+            return $this->getSingleTemplate($id, 'admin');
         } else {
             abort(403);
         }
@@ -128,7 +139,7 @@ class CategoryController extends Controller
             $category->parent = $data['parent'];
             $category->name = $data['name'];
             if ($category->save()) {
-                return response()->json(['save' => true, 'url' => route('admin.category.edit', ['id' => $category->id])]);
+                return response()->json(['save' => true, 'url' => route('admin.categories.edit', ['id' => $category->id])]);
             } else {
                 return response()->json(['save' => false]);
             }
@@ -176,6 +187,23 @@ class CategoryController extends Controller
             }
         } else {
             abort(403);
+        }
+    }
+
+    /**
+     * @param int $id
+     * @param string $prefix
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function getSingleTemplate($id = 0, $prefix = "")
+    {
+        $category = Category::find($id);
+        if (!empty($category)) {
+            return view($prefix . '.categoryTemplate', [
+                'category' => $category
+            ]);
+        } else {
+            abort(404);
         }
     }
 }

@@ -16,6 +16,11 @@ class AuthorController extends Controller
         return view('admin.authorsTemplate');
     }
 
+    public function getAuthorsTemplate()
+    {
+        return view('frontend.authorsTemplate');
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -45,17 +50,20 @@ class AuthorController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
+    public function getAuthorTemplate($name = null, $id = null, Request $request)
+    {
+        return $this->getSingleTemplate($id, 'frontend');
+    }
+
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getAuthorTemplateForAdmin($id = null, Request $request)
     {
         if ($request->user()->can('edit', Author::class)) {
-            $author = Author::find($id);
-            if (!empty($author)) {
-                return view('admin.authorTemplate', [
-                    'author' => $author
-                ]);
-            } else {
-                abort(404);
-            }
+            return $this->getSingleTemplate($id, 'admin');
         } else {
             abort(403);
         }
@@ -80,7 +88,7 @@ class AuthorController extends Controller
             $author->first_name = $data['first_name'];
             $author->last_name = $data['last_name'];
             if ($author->save()) {
-                return response()->json(['save' => true, 'url' => route('admin.author.edit', ['id' => $author->id])]);
+                return response()->json(['save' => true, 'url' => route('admin.authors.edit', ['id' => $author->id])]);
             } else {
                 return response()->json(['save' => false]);
             }
@@ -141,6 +149,11 @@ class AuthorController extends Controller
         }
     }
 
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteAuthor($id = null, Request $request)
     {
         if ($request->user()->can('delete', Author::class)) {
@@ -153,6 +166,23 @@ class AuthorController extends Controller
             abort(404);
         } else {
             abort(403);
+        }
+    }
+
+    /**
+     * @param int $id
+     * @param string $prefix
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function getSingleTemplate($id = 0, $prefix = "")
+    {
+        $author = Author::find($id);
+        if (!empty($author)) {
+            return view($prefix . '.authorTemplate', [
+                'author' => $author
+            ]);
+        } else {
+            abort(404);
         }
     }
 }

@@ -1,0 +1,35 @@
+ul {
+  list-style-type: none;
+}
+
+#category {
+
+}
+
+#book {
+  .image{
+    height: 150px;
+    padding-top: 20px;
+    img{
+      display: inline-block;
+      height: 100%;
+      width: auto;
+    }
+  }
+  .categories,
+  .authors {
+    h2{
+      font-size: 16px;
+    }
+    ul{
+      margin: 0;
+      padding: 0;
+      li{
+        display: inline-block;
+        &:not(:first-child){
+          padding-left: 10px;
+        }
+      }
+    }
+  }
+}

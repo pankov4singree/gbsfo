@@ -195,7 +195,7 @@ app.controller('AuthorCtrl', ['$scope', '$http', 'author', function ($scope, $ht
         }
     }
 }]);
-app.controller('BooksCtrl', ['$scope', 'book', function ($scope, $book) {
+app.controller('BooksCtrl', ['$scope', 'book', '$http', function ($scope, $book, $http) {
 
     $scope.showLoadMore = false;
     $scope.Books = [];
@@ -234,10 +234,10 @@ app.controller('BooksCtrl', ['$scope', 'book', function ($scope, $book) {
                     }
                 }
             } else {
-                alert('You can\'t delete author');
+                alert('You can\'t delete book');
             }
         }).catch(function (response) {
-            alert('You can\'t delete author');
+            alert('You can\'t delete book');
         });
     }
 }]);
@@ -278,7 +278,6 @@ app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($s
         if ($scope.Book.id != 0) {
             $scope.buttonTitle = 'Update';
         }
-
     });
 
     $scope.save = function () {
@@ -310,24 +309,44 @@ app.controller('BookCtrl', ['$scope', 'category', 'author', 'book', function ($s
     };
 
 }]);
-app.directive('fileModel', function () {
+app.directive('fileUploader', function () {
 
     var default_file = {
-        name: "Select Photo"
+        name: "Select Image"
     };
 
     return {
-        restrict: 'A',
+        restrict: 'E',
+        templateUrl: '/angular-template/admin/file-upload.html',
         link: function ($scope, $element, $attrs) {
+            $scope.block_id = parseInt(Math.random() * 100);
+            if (typeof $attrs.id !== typeof undefined) {
+                $scope.block_id += '-' + $attrs.id;
+            }
+            if (typeof $attrs.model !== typeof undefined) {
+                var model = $attrs.model;
+            } else {
+                alert('attribute "model" is required for file-uploader element');
+            }
+
+            if (typeof $attrs.field !== typeof undefined) {
+                var field = $attrs.field;
+            } else {
+                alert('attribute "field" is required for file-uploader element');
+            }
 
             $scope.file = default_file;
+            $scope.image_url = $scope[model][field];
 
-            $element.bind('change', function () {
+            $element.find('input').bind('change', function () {
+                var file_input = this;
                 $scope.$apply(function () {
-                    if ($element[0].files.length) {
-                        $scope.file = $element[0].files[0];
+                    if (file_input.files.length) {
+                        $scope.file = file_input.files[0];
+                        $scope.image_url = URL.createObjectURL($scope.file);
                     } else {
-                        $scope.file = default_file
+                        $scope.file = default_file;
+                        $scope.image_url = $scope[model][field];
                     }
                 });
             });
@@ -445,7 +464,7 @@ app.factory('book', function ($http) {
         updateBook: function (object) {
             var form = new FormData();
             for (var key in object) {
-                if (object[key] instanceof Array) {
+                if (Array.isArray(object[key])) {
                     form.append(key, JSON.stringify(object[key]));
                 } else {
                     form.append(key, object[key]);
@@ -464,7 +483,7 @@ app.factory('book', function ($http) {
             return true;
         },
         showBookError: function (errors) {
-            category.block_save = false;
+            book.block_save = false;
             var error_text = "Something went wrong. Save failed";
             if (Object.keys(errors).length) {
                 for (var error_block in errors) {

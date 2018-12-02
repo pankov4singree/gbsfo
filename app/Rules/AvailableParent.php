@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class AvailableParent implements Rule
 {
 
+    /**
+     * @var Model $model
+     */
     protected $model;
 
+    /**
+     * @var string $message
+     */
     protected $message = '';
 
     /**

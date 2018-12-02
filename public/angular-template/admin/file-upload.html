@@ -1,0 +1,5 @@
+<label for="<%block_id%>">Photo
+    <span class="form-control btn btn-primary"><%file.name%></span>
+    <input ng-show="false" type="file" name="photo" class="form-control" id="<%block_id%>">
+</label>
+<img style="display: block; height: 150px;" src="<%image_url%>" ng-show="image_url">
